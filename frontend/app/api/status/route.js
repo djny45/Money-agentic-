@@ -6,7 +6,7 @@ export async function GET() {
     postiz: ["POSTIZ_API_KEY", "POSTIZ_API_URL"],
     bluesky: ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"],
     mastodon: ["MASTODON_ACCESS_TOKEN", "MASTODON_BASE_URL"],
-    ollama: ["OLLAMA_URL", "OLLAMA_MODEL"]
+    llm_api: ["LLM_API_KEY", "LLM_API_URL", "LLM_MODEL"]
   };
   const integrations = Object.entries(providers).map(([name, vars]) => ({
     name,
