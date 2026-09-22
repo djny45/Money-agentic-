@@ -64,10 +64,17 @@ pip install -r requirements.txt
 cp .env.example .env
 python -m app init
 python -m app plan "Your CPA offer" --channel social
+python -m app banner "Review this offer" "See the current offer details before deciding." --cta "Learn more" --slug example-offer
 pytest -q
 ```
 
 Default behavior is **DRY_RUN** and publishing requires an explicitly authorized integration.
+
+### Open-source creative stack
+
+- **Ollama** — local language-model inference for research/copy workflows.
+- **ComfyUI** — self-hosted image generation workflow engine.
+- **Postiz** — self-hosted publishing/scheduling integration for authorized social accounts.
 
 ### Open-source image generation
 
