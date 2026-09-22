@@ -1,5 +1,8 @@
 # Money-Agentic
 
+<p align="center"><img src="assets/money-agentic-logo.svg" alt="Money-Agentic logo" width="720"></p>
+
+
 Autonomous CPA promotion and optimization agent focused on legitimate, measurable affiliate traffic.
 
 ## Mission
