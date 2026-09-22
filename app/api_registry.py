@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 import os
 
+
 @dataclass(frozen=True)
 class APIConfig:
-    """Central registry for optional integrations.
+    """Central registry for optional external API sessions.
 
     Secrets are read from environment variables only and are never stored in
     source code, SQLite, logs, or strategy memory.
@@ -16,8 +17,9 @@ class APIConfig:
     bluesky_app_password: str = os.getenv("BLUESKY_APP_PASSWORD", "")
     mastodon_access_token: str = os.getenv("MASTODON_ACCESS_TOKEN", "")
     mastodon_base_url: str = os.getenv("MASTODON_BASE_URL", "")
-    ollama_url: str = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
-    ollama_model: str = os.getenv("OLLAMA_MODEL", "phi3")
+    llm_api_key: str = os.getenv("LLM_API_KEY", "")
+    llm_api_url: str = os.getenv("LLM_API_URL", "")
+    llm_model: str = os.getenv("LLM_MODEL", "")
 
     def configured(self) -> dict[str, bool]:
         return {
@@ -25,5 +27,5 @@ class APIConfig:
             "postiz": bool(self.postiz_api_key and self.postiz_api_url),
             "bluesky": bool(self.bluesky_handle and self.bluesky_app_password),
             "mastodon": bool(self.mastodon_access_token and self.mastodon_base_url),
-            "ollama": bool(self.ollama_url and self.ollama_model),
+            "llm_api": bool(self.llm_api_key and self.llm_api_url and self.llm_model),
         }
