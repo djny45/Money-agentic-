@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
+from .comfyui import ComfyUIClient
 
 
 @dataclass(frozen=True)
@@ -40,6 +41,16 @@ class BannerAgent:
 <text x="195" y="433" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="800" fill="#080808">{cta}</text>
 <text x="78" y="548" font-family="Arial,Helvetica,sans-serif" font-size="16" letter-spacing="4" fill="#888">CLEAR • COMPLIANT • MEASURABLE</text>
 </svg>'''
+
+    def queue_image_workflow(self, brief: BannerBrief, workflow: dict, comfyui_url: str = "http://127.0.0.1:8188") -> dict:
+        """Queue a supplied ComfyUI API-format workflow using verified campaign facts."""
+        prompt = self.prompt(brief)
+        workflow = dict(workflow)
+        for node in workflow.values():
+            inputs = node.get("inputs", {}) if isinstance(node, dict) else {}
+            if isinstance(inputs, dict) and "text" in inputs:
+                inputs["text"] = prompt
+        return ComfyUIClient(comfyui_url).queue_workflow(workflow)
 
     def build_file(self, brief: BannerBrief, output_path: str, width: int = 1200, height: int = 628) -> str:
         path = Path(output_path)
