@@ -73,7 +73,7 @@ async def health():
 
 @app.get("/api/status")
 async def status():
-    return {"integrations": integration_status()}
+    return {"mode": settings.mode, "auto_publish": settings.auto_publish, "approval_required": not settings.auto_publish, "integrations": integration_status()}
 
 @app.get("/api/analytics")
 async def api_analytics():
