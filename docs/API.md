@@ -25,3 +25,7 @@ POSTIZ_API_KEY=
 POSTIZ_API_URL=https://api.postiz.com
 
 Use the exact feed/report endpoint and credentials provided by the relevant provider account. Do not copy secrets into Git.
+
+## Campaign intelligence service
+
+The Python service layer now persists offers and experiments, generates UTM tracking URLs from stored offer destinations, aggregates measured metrics, and evaluates experiments through the evidence-based learning engine. Learning actions are `collect_more_data`, `pause_experiment`, or `retain_and_test`; the service does not rewrite executable code.
