@@ -51,6 +51,7 @@ Research -> Offer Intelligence -> Strategy -> Content -> Compliance
 - SQLite persistence
 - Strategy memory
 - Generic external LLM API session (key stays server-side)
+- OpenAffiliate read-only research registry integration
 - Docker support
 - Automated tests + GitHub Actions
 - Policy configuration
