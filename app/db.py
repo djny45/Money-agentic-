@@ -27,6 +27,15 @@ CREATE TABLE IF NOT EXISTS experiments (
   spend REAL DEFAULT 0,
   started_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS strategy_versions (
+  name TEXT NOT NULL,
+  version INTEGER NOT NULL,
+  hypothesis TEXT NOT NULL,
+  actions_json TEXT NOT NULL,
+  evidence_json TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (name, version)
+);
 CREATE TABLE IF NOT EXISTS strategies (
   name TEXT PRIMARY KEY,
   version INTEGER NOT NULL,
