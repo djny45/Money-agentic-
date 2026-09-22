@@ -41,6 +41,7 @@ Research -> Offer Intelligence -> Strategy -> Content -> Compliance
 - Offer scoring from supplied/observed metrics
 - Content variant generation
 - AI-assisted ad banner generation (SVG + model-neutral prompt)
+- Optional self-hosted image generation through open-source ComfyUI
 - Approval-gated ad creative upload interface
 - Compliance gate
 - Dry-run publisher queue
@@ -67,6 +68,10 @@ pytest -q
 ```
 
 Default behavior is **DRY_RUN** and publishing requires an explicitly authorized integration.
+
+### Open-source image generation
+
+The banner agent can optionally submit an API-format workflow to a locally hosted **ComfyUI** instance at `COMFYUI_URL`. This keeps image generation self-hosted and avoids requiring a hosted image-generation API. ComfyUI workflows are supplied by the deployment rather than invented by the agent. See the official ComfyUI API example for the `/prompt` workflow format. citeturn0search0turn0search2
 
 ## Self-improvement model
 
