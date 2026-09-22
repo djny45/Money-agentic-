@@ -25,6 +25,16 @@ async def create_postiz_draft(content: str, integration_ids: list[str], schedule
     )
 
 
+async def create_postiz_draft(content: str, integration_ids: list[str], scheduled_at: str) -> dict:
+    cfg = APIConfig()
+    if not cfg.postiz_api_url or not cfg.postiz_api_key:
+        return {"configured": False, "status": "not_configured"}
+    client = PostizClient(cfg.postiz_api_url, cfg.postiz_api_key)
+    return await client.create_post(
+        content, integration_ids, scheduled_at, draft=True, short_link=True
+    )
+
+
 async def postiz_integrations() -> dict:
     cfg = APIConfig()
     if not cfg.postiz_api_url or not cfg.postiz_api_key:
