@@ -1,0 +1,20 @@
+mode: compliant
+
+publishing:
+  require_authorized_account: true
+  require_platform_api_or_explicit_user_action: true
+  auto_publish: false
+
+traffic:
+  prohibit_fake_clicks: true
+  prohibit_fake_leads: true
+  prohibit_account_farming: true
+  prohibit_spam: true
+  prohibit_rate_limit_bypass: true
+
+learning:
+  allow_strategy_updates: true
+  allow_autonomous_code_changes: false
+  require_regression_tests: true
+  keep_strategy_versions: true
+  rollback_on_regression: true
