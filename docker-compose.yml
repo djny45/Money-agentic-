@@ -7,44 +7,16 @@ services:
       - ./data:/app/data
       - ./creatives:/app/creatives
     restart: unless-stopped
-
-  ollama:
-    image: ollama/ollama:latest
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: unless-stopped
-
-  comfyui:
-    image: yanwk/comfyui-boot:latest
-    ports:
-      - "8188:8188"
-    volumes:
-      - comfyui_data:/root
-    restart: unless-stopped
-
-volumes:
-  ollama_data:
-  comfyui_data:
     depends_on:
-      - ollama
       - comfyui
-
-  ollama:
-    image: ollama/ollama:latest
-    volumes:
-      - ollama:/root/.ollama
-    ports:
-      - "11434:11434"
-    restart: unless-stopped
 
   comfyui:
     image: comfyanonymous/comfyui:latest
     ports:
       - "8188:8188"
     volumes:
-      - comfyui:/comfyui
+      - comfyui_data:/comfyui
     restart: unless-stopped
 
 volumes:
-  ollama:
-  comfyui:
+  comfyui_data:
