@@ -4,7 +4,10 @@ from app import services
 
 @pytest.mark.asyncio
 async def test_offer_and_experiment_metrics(tmp_path, monkeypatch):
-    monkeypatch.setattr(services, "DB_PATH", tmp_path / "test.db")
+    path = tmp_path / "test.db"
+    from app import db
+    monkeypatch.setattr(db, "DB_PATH", path)
+    monkeypatch.setattr(services, "DB_PATH", path)
     await services.init_db()
     offer = await services.create_offer(
         title="Test offer", url="https://example.test", payout=1.5, country="IN"
