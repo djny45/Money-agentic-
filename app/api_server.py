@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 from .api_service import integration_status, search_openaffiliate, fetch_cpagrip_offers
 from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, import_observed_offers, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
 from .audit import list_audit, log_action
+from .strategy import StrategyManager
+from .strategy_store import get_strategy, list_strategy_versions, rollback_strategy, save_strategy
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
 
@@ -27,6 +29,13 @@ class ExperimentIn(BaseModel):
     channel: str
     variant: str
     experiment_id: str | None = None
+
+class StrategyIn(BaseModel):
+    offer_title: str
+    channel: str
+
+class RollbackIn(BaseModel):
+    version: int = Field(ge=1)
 
 class MetricsIn(BaseModel):
     impressions: int = Field(default=0, ge=0)
@@ -109,6 +118,34 @@ async def import_cpagrip(authorization: str | None = Header(default=None)):
     imported = await import_observed_offers(rows)
     await log_action("cpagrip_import", details={"observed": len(rows), "imported": len(imported)})
     return {"imported": imported, "observed": len(rows)}
+
+@app.post("/api/strategies/propose")
+async def propose_strategy(payload: StrategyIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    strategy = StrategyManager().propose(payload.offer_title, payload.channel)
+    result = await save_strategy(strategy)
+    await log_action("strategy_saved", target=result["name"], details={"version": result["version"]})
+    return result
+
+@app.get("/api/strategies/{name}")
+async def strategy(name: str):
+    result = await get_strategy(name)
+    if not result:
+        raise HTTPException(status_code=404, detail="strategy not found")
+    return result
+
+@app.get("/api/strategies/{name}/versions")
+async def strategy_versions(name: str):
+    return {"versions": await list_strategy_versions(name)}
+
+@app.post("/api/strategies/{name}/rollback")
+async def strategy_rollback(name: str, payload: RollbackIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    result = await rollback_strategy(name, payload.version)
+    if not result:
+        raise HTTPException(status_code=404, detail="strategy version not found")
+    await log_action("strategy_rollback", target=name, details={"source_version": payload.version, "new_version": result["version"]})
+    return result
 
 @app.get("/api/audit")
 async def audit(limit: int = 100, authorization: str | None = Header(default=None)):
