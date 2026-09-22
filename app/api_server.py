@@ -7,6 +7,7 @@ from .audit import list_audit, log_action
 from .strategy import StrategyManager
 from .publish_store import approve as approve_publish, enqueue as enqueue_publish, list_items as list_publish_items
 from .autopilot import list_autopilot_runs, run_autopilot
+from .optimizer import optimize_experiments
 from .strategy_store import get_strategy, list_strategy_versions, rollback_strategy, save_strategy
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
@@ -154,6 +155,22 @@ async def autopilot_run(payload: AutopilotIn, authorization: str | None = Header
             "scanned": result["scanned"],
             "queued": result["queued"],
             "blocked": result["blocked"],
+        },
+    )
+    return result
+
+
+@app.post("/api/autopilot/optimize")
+async def autopilot_optimize(authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    result = await optimize_experiments(sample_floor=settings.min_experiment_sample)
+    await log_action(
+        "autopilot_optimize",
+        details={
+            "evaluated": result["evaluated"],
+            "promoted": result["promoted"],
+            "revised": result["revised"],
+            "paused": result["paused"],
         },
     )
     return result
