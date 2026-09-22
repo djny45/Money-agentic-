@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">Money-Agentic logo</title><desc id="desc">Futuristic AI agent robot with an orange orbital ring and growth arrow.</desc>
+<defs>
+ <radialGradient id="bg"><stop offset="0" stop-color="#171717"/><stop offset="1" stop-color="#030303"/></radialGradient>
+ <linearGradient id="metal" x1="0" x2="1"><stop stop-color="#f5f5f5"/><stop offset=".45" stop-color="#777"/><stop offset="1" stop-color="#222"/></linearGradient>
+ <linearGradient id="gold" x1="0" x2="1"><stop stop-color="#ffd36a"/><stop offset=".5" stop-color="#ff9f1c"/><stop offset="1" stop-color="#ff6b00"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1200" height="700" rx="42" fill="url(#bg)"/>
+<g transform="translate(80 35)">
+ <ellipse cx="520" cy="270" rx="305" ry="235" fill="none" stroke="url(#gold)" stroke-width="8" opacity=".95" filter="url(#glow)" transform="rotate(-18 520 270)"/>
+ <circle cx="770" cy="78" r="20" fill="#ffae2b" filter="url(#glow)"/>
+ <path d="M255 435 C310 515 420 540 545 505 C660 473 720 400 740 320" fill="none" stroke="#111" stroke-width="46"/>
+ <path d="M310 210 Q310 105 430 85 Q555 65 650 125 Q710 165 690 275 Q670 355 575 375 L420 365 Q315 350 310 210Z" fill="url(#metal)" stroke="#050505" stroke-width="9"/>
+ <rect x="350" y="150" width="300" height="185" rx="78" fill="#050505" stroke="#333" stroke-width="7"/>
+ <path d="M415 240 Q440 205 470 240 Q440 265 415 240Z M530 240 Q555 205 585 240 Q555 265 530 240Z" fill="#ff9d18" filter="url(#glow)"/>
+ <circle cx="325" cy="225" r="50" fill="#202020" stroke="url(#gold)" stroke-width="7"/>
+ <circle cx="325" cy="225" r="14" fill="#ff9d18" filter="url(#glow)"/>
+ <path d="M455 375 L455 450 Q520 475 585 450 L585 375" fill="#151515" stroke="#777" stroke-width="5"/>
+ <text x="520" y="438" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="800" fill="url(#gold)">M</text>
+ <g transform="translate(700 220)">
+   <rect x="0" y="150" width="52" height="105" rx="4" fill="#eee"/>
+   <rect x="70" y="105" width="52" height="150" rx="4" fill="#ccc"/>
+   <rect x="140" y="50" width="52" height="205" rx="4" fill="#999"/>
+   <path d="M-15 225 C80 185 115 105 205 -10" fill="none" stroke="url(#gold)" stroke-width="18" filter="url(#glow)"/>
+   <path d="M170 10 L225 -28 L213 45 Z" fill="#ff9f1c"/>
+ </g>
+</g>
+<text x="600" y="590" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="72" font-weight="800" fill="#fff">Money-<tspan fill="#ff9f1c">Agentic-</tspan></text>
+<text x="600" y="635" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="22" letter-spacing="9" fill="#ddd">AI AGENTS FOR REAL INCOME</text>
+</svg>
