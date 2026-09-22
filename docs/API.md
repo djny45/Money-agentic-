@@ -1,30 +1,27 @@
-# API & Integrations
-
-All integration credentials are configured through environment variables. **Never put real API keys in source code or commit them to GitHub.**
-
-## Integration groups
-
-| Integration | Variables | Purpose |
-|---|---|---|
-| CPA network | `CPAGRIP_API_KEY`, `CPAGRIP_API_URL` | Authorized offer/report integration |
-| Postiz | `POSTIZ_API_KEY`, `POSTIZ_API_URL` | Self-hosted publishing/scheduling |
-| Bluesky | `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` | Authorized social publishing |
-| Mastodon | `MASTODON_ACCESS_TOKEN`, `MASTODON_BASE_URL` | Authorized social publishing |
-| Ollama | `OLLAMA_URL`, `OLLAMA_MODEL` | Local AI inference |
+# API and integration contract
 
 ## Security
+Secrets are environment variables only. They are never returned by the website API, stored in SQLite, or written to strategy memory.
 
-- Secrets are loaded from environment variables.
-- Real credentials must stay outside Git.
-- Only authorized accounts may publish.
-- Rate limits and platform rules must be respected.
-- Publishing stays disabled until explicitly configured.
-- Integration failures should fail closed rather than trigger uncontrolled retries.
+## CPAGrip
+The adapter treats CPAGrip as an offer-feed integration. CPAGrip documents JSON/XML/CSV offer feeds and postback/analytics tooling. The configured CPAGRIP_API_URL therefore points to the feed/report endpoint supplied by the user's CPAGrip account rather than an assumed undocumented REST route.
 
-## Adding an integration
+The adapter can health-check the configured feed, fetch it, parse JSON/XML/CSV, and normalize common offer fields: id, title, url, payout, country, category.
 
-1. Add environment-variable names to `.env.example`.
-2. Add configuration to `app/api_registry.py`.
-3. Implement a dedicated adapter.
-4. Add tests with mocks/fixtures.
-5. Add rate limiting and error handling.
+The agent does not fabricate offer metrics. Conversion rate, EPC, and revenue must come from observed campaign/report data.
+
+## Postiz
+The adapter uses the documented public API endpoints GET /public/v1/integrations and POST /public/v1/posts.
+
+Publishing is approval-first. The dashboard should create drafts by default. Scheduling a live post requires an explicitly configured, authorized Postiz integration ID and an explicit approval action.
+
+The agent must not create accounts, evade platform limits, generate fake engagement, or publish spam.
+
+## Environment
+
+CPAGRIP_API_KEY=
+CPAGRIP_API_URL=
+POSTIZ_API_KEY=
+POSTIZ_API_URL=https://api.postiz.com
+
+Use the exact feed/report endpoint and credentials provided by the relevant provider account. Do not copy secrets into Git.
