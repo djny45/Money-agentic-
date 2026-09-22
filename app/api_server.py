@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Header
 from .config import settings
 from pydantic import BaseModel, Field
-from .api_service import integration_status, search_openaffiliate
+from .api_service import integration_status, search_openaffiliate, fetch_cpagrip_offers
 from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
@@ -94,6 +94,10 @@ async def tracked_url(offer_id: str, source: str, medium: str, campaign: str, co
         raise HTTPException(status_code=404, detail="offer not found")
     return {"url": result}
 
+
+@app.get("/api/research/cpagrip-offers")
+async def cpagrip_offers():
+    return {"source": "configured CPAGrip feed", "offers": await fetch_cpagrip_offers()}
 
 @app.get("/api/research/affiliate-programs")
 async def affiliate_programs(q: str = "", category: str | None = None, commission_type: str | None = None, verified: bool | None = None):
