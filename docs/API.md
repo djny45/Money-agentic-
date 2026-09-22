@@ -29,3 +29,8 @@ Use the exact feed/report endpoint and credentials provided by the relevant prov
 ## Campaign intelligence service
 
 The Python service layer now persists offers and experiments, generates UTM tracking URLs from stored offer destinations, aggregates measured metrics, and evaluates experiments through the evidence-based learning engine. Learning actions are `collect_more_data`, `pause_experiment`, or `retain_and_test`; the service does not rewrite executable code.
+
+
+## Provider operations
+
+The service layer can fetch a configured CPAGrip offer feed and list authorized Postiz integrations. Secrets are read only from environment variables. Publishing remains approval-gated.
