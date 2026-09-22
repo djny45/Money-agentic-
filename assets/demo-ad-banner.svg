@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="628" viewBox="0 0 1200 628">
+<defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050505"/><stop offset="1" stop-color="#1a1a1a"/></linearGradient><linearGradient id="a"><stop stop-color="#ff9f1c"/><stop offset="1" stop-color="#ffd166"/></linearGradient></defs>
+<rect width="1200" height="628" rx="36" fill="url(#b)"/>
+<circle cx="1020" cy="80" r="220" fill="none" stroke="#ff9f1c" stroke-opacity=".12" stroke-width="2"/>
+<circle cx="1050" cy="110" r="145" fill="none" stroke="#ff9f1c" stroke-opacity=".16" stroke-width="2"/>
+<path d="M760 510 C880 410 930 300 1080 145" fill="none" stroke="url(#a)" stroke-width="10"/>
+<path d="M1055 150 l55 -20 -20 55" fill="#ff9f1c"/>
+<text x="78" y="92" font-family="Arial" font-size="28" font-weight="700" fill="#ff9f1c">Money-Agentic</text>
+<text x="78" y="245" font-family="Arial" font-size="68" font-weight="800" fill="#fff">Review this offer</text>
+<text x="78" y="315" font-family="Arial" font-size="27" fill="#d6d6d6">See the current offer details before deciding.</text>
+<rect x="78" y="390" width="235" height="68" rx="34" fill="url(#a)"/>
+<text x="195" y="433" text-anchor="middle" font-family="Arial" font-size="25" font-weight="800" fill="#080808">Learn more</text>
+<text x="78" y="548" font-family="Arial" font-size="16" letter-spacing="4" fill="#888">CLEAR • COMPLIANT • MEASURABLE</text>
+</svg>
