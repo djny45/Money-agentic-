@@ -74,6 +74,7 @@ Default behavior is **DRY_RUN** and publishing requires an explicitly authorized
 
 - **Ollama** — local language-model inference for research/copy workflows.
 - **ComfyUI** — self-hosted image generation workflow engine.
+- **LocalAI** — optional OpenAI-compatible local inference fallback.
 - **Postiz** — self-hosted publishing/scheduling integration for authorized social accounts.
 
 ### Open-source image generation
