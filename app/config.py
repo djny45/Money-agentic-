@@ -12,5 +12,6 @@ class Settings:
     max_daily_posts: int = int(os.getenv("MAX_DAILY_POSTS", "20"))
     min_experiment_sample: int = int(os.getenv("MIN_EXPERIMENT_SAMPLE", "30"))
     auto_publish: bool = os.getenv("AUTO_PUBLISH", "false").lower() == "true"
+    control_token: str = os.getenv("CONTROL_PANEL_TOKEN", "")
 
 settings = Settings()
