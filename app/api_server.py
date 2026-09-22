@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Header
 from .config import settings
 from pydantic import BaseModel, Field
-from .api_service import integration_status, search_openaffiliate, fetch_cpagrip_offers
+from .api_service import integration_status, search_openaffiliate, fetch_cpagrip_offers, create_postiz_draft
 from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, import_observed_offers, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
 from .audit import list_audit, log_action
 from .strategy import StrategyManager
@@ -29,6 +29,12 @@ class ExperimentIn(BaseModel):
     channel: str
     variant: str
     experiment_id: str | None = None
+
+class PostDraftIn(BaseModel):
+    content: str = Field(min_length=1, max_length=10000)
+    integration_ids: list[str] = Field(min_length=1, max_length=20)
+    scheduled_at: str
+
 
 class StrategyIn(BaseModel):
     offer_title: str
@@ -118,6 +124,14 @@ async def import_cpagrip(authorization: str | None = Header(default=None)):
     imported = await import_observed_offers(rows)
     await log_action("cpagrip_import", details={"observed": len(rows), "imported": len(imported)})
     return {"imported": imported, "observed": len(rows)}
+
+@app.post("/api/publishing/postiz-draft")
+async def postiz_draft(payload: PostDraftIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    result = await create_postiz_draft(payload.content, payload.integration_ids, payload.scheduled_at)
+    await log_action("postiz_draft_requested", details={"integration_count": len(payload.integration_ids), "status": result.get("status")})
+    return result
+
 
 @app.post("/api/strategies/propose")
 async def propose_strategy(payload: StrategyIn, authorization: str | None = Header(default=None)):
