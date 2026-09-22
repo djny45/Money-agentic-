@@ -11,6 +11,12 @@ Turn measured campaign data into better promotional strategies through a control
 
 **The system targets genuine conversions and revenue. It does not generate fake clicks/leads, create fake accounts, spam communities, bypass rate limits, or manipulate affiliate tracking.**
 
+### Ad creative workflow
+
+The agent can turn verified offer facts into ad banners, generate a model-neutral image prompt, and prepare the creative for an authorized advertising-platform API. Uploading is approval-gated; platform review, authentication, rate limits, and ad policies are never bypassed.
+
+![Demo ad banner](assets/demo-ad-banner.svg)
+
 ## Architecture
 
 ```
@@ -34,6 +40,8 @@ Research -> Offer Intelligence -> Strategy -> Content -> Compliance
 - Swarm coordinator
 - Offer scoring from supplied/observed metrics
 - Content variant generation
+- AI-assisted ad banner generation (SVG + model-neutral prompt)
+- Approval-gated ad creative upload interface
 - Compliance gate
 - Dry-run publisher queue
 - Experiment primitives
