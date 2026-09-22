@@ -8,15 +8,13 @@ app = typer.Typer(help="Money-Agentic CPA optimization swarm.")
 
 @app.command()
 def init():
-    """Initialize the local database."""
     asyncio.run(init_db())
     print("[green]Database initialized.[/green]")
 
 @app.command()
 def plan(offer: str, channel: str = "dry-run"):
-    """Generate a strategy plan without publishing."""
-    result = MoneySwarm().plan(offer, channel)
-    print(result)
+    """Generate a strategy and content plan without publishing."""
+    print(MoneySwarm().plan(offer, channel))
 
 def main():
     app()
