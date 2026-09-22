@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const integrations = [["CPA Network","cpagrip"],["Postiz","postiz"],["Bluesky","bluesky"],["Mastodon","mastodon"],["Ollama","ollama"]];
+const integrations = [["CPA Network","cpagrip"],["Postiz","postiz"],["Bluesky","bluesky"],["Mastodon","mastodon"],["LLM API","llm_api"]];
 
 export default function Home() {
   const [status,setStatus] = useState({agent:"loading",publishing:"loading",mode:"DRY_RUN"});
