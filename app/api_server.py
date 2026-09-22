@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Header
 from .config import settings
 from pydantic import BaseModel, Field
 from .api_service import integration_status, search_openaffiliate, fetch_cpagrip_offers
-from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
+from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, import_observed_offers, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
 
