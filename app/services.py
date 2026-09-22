@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 import uuid
 
 from .db import DB_PATH, init_db
+from .tracking import add_utm
+from .learning import LearningEngine
 
 
 def _now() -> str:
@@ -98,6 +100,38 @@ async def record_metrics(experiment_id: str, *, impressions: int = 0,
         )
         await db.commit()
     return await get_experiment(experiment_id)
+
+
+async def tracked_offer_url(offer_id: str, *, source: str, medium: str,
+                            campaign: str, content: str | None = None) -> str | None:
+    offer = await get_offer(offer_id)
+    if not offer:
+        return None
+    return add_utm(
+        offer["url"],
+        source=source,
+        medium=medium,
+        campaign=campaign,
+        content=content,
+    )
+
+
+async def learning_decision(experiment_id: str, sample_floor: int = 30) -> dict | None:
+    experiment = await get_experiment(experiment_id)
+    if not experiment:
+        return None
+    decision = LearningEngine().evaluate(
+        clicks=experiment["clicks"],
+        conversions=experiment["conversions"],
+        revenue=experiment["revenue"],
+        sample_floor=sample_floor,
+    )
+    return {
+        "experiment_id": experiment_id,
+        "action": decision.action,
+        "reason": decision.reason,
+        "confidence": decision.confidence,
+    }
 
 
 async def analytics() -> dict:
