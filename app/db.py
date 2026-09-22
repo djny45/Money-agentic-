@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS experiments (
   clicks INTEGER DEFAULT 0,
   conversions INTEGER DEFAULT 0,
   revenue REAL DEFAULT 0,
+  spend REAL DEFAULT 0,
   started_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS strategies (
