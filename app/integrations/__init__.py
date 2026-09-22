@@ -1,0 +1,1 @@
+"""Authorized external integration adapters."""
