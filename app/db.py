@@ -42,10 +42,26 @@ CREATE TABLE IF NOT EXISTS knowledge (
   content TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS audit_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  action TEXT NOT NULL,
+  actor TEXT NOT NULL,
+  target TEXT,
+  details_json TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
 """
 
 async def init_db() -> None:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     async with aiosqlite.connect(DB_PATH) as db:
         await db.executescript(SCHEMA)
+
+        # Lightweight forward migration for databases created before spend
+        # was added to the experiments table.
+        cursor = await db.execute("PRAGMA table_info(experiments)")
+        columns = {row[1] for row in await cursor.fetchall()}
+        if "spend" not in columns:
+            await db.execute("ALTER TABLE experiments ADD COLUMN spend REAL DEFAULT 0")
+
         await db.commit()
