@@ -12,8 +12,8 @@ export default function Home() {
     Promise.all([fetch("/api/status").then(r=>r.json()),fetch("/api/analytics").then(r=>r.json())])
       .then(([s,a]) => {
         setStatus({...s,agent:"ready",publishing:s.approvalRequired ? "approval_required" : "enabled"});
-        setConnected(Object.fromEntries(s.integrations.map(x=>[x.name,x.configured])));
-        setMetrics(a);
+        setConnected(Object.fromEntries((s.integrations||[]).map(x=>[x.name,x.configured])));
+        setMetrics(a); refreshAutomation();
       }).catch(()=>setStatus({agent:"offline",publishing:"unavailable",mode:"UNKNOWN"}));
   }, []);
 
@@ -40,6 +40,15 @@ export default function Home() {
     </section>
     <section className="panel"><div className="heading"><div><p className="eyebrow">API CONTROL CENTER</p><h2>Connect everything here</h2></div><span className="pill">SECRETS STAY SERVER-SIDE</span></div>
       <div className="apis">{integrations.map(([name,key])=><div className="api" key={key}><div className={connected[key]?"dot live":"dot"}></div><div><strong>{name}</strong><span>{connected[key]?"Configured":"Not configured"}</span></div><code>{key}</code><button className="connect" disabled>{connected[key]?"Connected":"Configure on server"}</button></div>)}</div>
+    </section>
+    <section className="panel"><div className="heading"><div><p className="eyebrow">AUTOPILOT</p><h2>Campaign control loop</h2></div><button className="connect" disabled={running} onClick={async()=>{setRunning(true);try{await fetch("/api/autopilot/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({channel:"postiz",limit:5})});await refreshAutomation();}finally{setRunning(false);}}}>{running?"Running…":"Run autopilot"}</button></div>
+      <p className="sub">Research, score, compliance-check and queue observed offers. Publishing remains approval-gated.</p>
+      <div className="grid">
+        <article><small>PENDING APPROVAL</small><b>{queue.length}</b><span>Drafts waiting for review</span></article>
+        <article><small>AUTOMATION RUNS</small><b>{runs.length}</b><span>Recorded control cycles</span></article>
+        <article><small>LAST RUN</small><b>{runs[0]?.queued ?? 0}</b><span>Items queued</span></article>
+      </div>
+      {queue.slice(0,5).map(item=><div className="api" key={item.id}><div><strong>{item.channel}</strong><span>{item.text}</span></div><code>#{item.id}</code></div>)}
     </section>
     <section className="panel"><div className="heading"><div><p className="eyebrow">SWARM</p><h2>Agent pipeline</h2></div></div>
       <div className="pipeline">{["Research","Offer Intelligence","Content","Compliance","Publish Queue","Analytics","Learning"].map((x,i)=><div key={x}><em>{String(i+1).padStart(2,"0")}</em><span>{x}</span></div>)}</div>
