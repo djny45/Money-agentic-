@@ -83,7 +83,7 @@ async def list_experiments() -> list[dict]:
 
 async def record_metrics(experiment_id: str, *, impressions: int = 0,
                          clicks: int = 0, conversions: int = 0,
-                         revenue: float = 0.0) -> dict | None:
+                         revenue: float = 0.0, spend: float = 0.0) -> dict | None:
     values = [impressions, clicks, conversions]
     if any(int(v) < 0 for v in values) or float(revenue) < 0 or float(spend) < 0:
         raise ValueError("metrics must be non-negative")
