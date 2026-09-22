@@ -7,6 +7,8 @@ export async function GET() {
     conversions: 0,
     revenue: 0,
     spend: 0,
+    profit: 0,
+    epc: 0,
     source: "connected campaign data"
   });
 }
