@@ -1,9 +1,17 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
+from .config import settings
 from pydantic import BaseModel, Field
 from .api_service import integration_status
 from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
+
+
+def require_control_token(authorization: str | None) -> None:
+    if not settings.control_token:
+        raise HTTPException(status_code=503, detail="control token is not configured")
+    if authorization != f"Bearer {settings.control_token}":
+        raise HTTPException(status_code=401, detail="unauthorized")
 
 class OfferIn(BaseModel):
     title: str
@@ -43,7 +51,8 @@ async def offers():
     return await list_offers()
 
 @app.post("/api/offers")
-async def add_offer(payload: OfferIn):
+async def add_offer(payload: OfferIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
     return await create_offer(**payload.model_dump())
 
 @app.get("/api/offers/{offer_id}")
@@ -58,13 +67,15 @@ async def experiments():
     return await list_experiments()
 
 @app.post("/api/experiments")
-async def add_experiment(payload: ExperimentIn):
+async def add_experiment(payload: ExperimentIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
     if not await get_offer(payload.offer_id):
         raise HTTPException(status_code=404, detail="offer not found")
     return await create_experiment(**payload.model_dump())
 
 @app.post("/api/experiments/{experiment_id}/metrics")
-async def metrics(experiment_id: str, payload: MetricsIn):
+async def metrics(experiment_id: str, payload: MetricsIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
     if not await get_experiment(experiment_id):
         raise HTTPException(status_code=404, detail="experiment not found")
     return await record_metrics(experiment_id, **payload.model_dump())
