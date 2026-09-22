@@ -5,6 +5,7 @@ from .api_service import integration_status, search_openaffiliate, fetch_cpagrip
 from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, import_observed_offers, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
 from .audit import list_audit, log_action
 from .strategy import StrategyManager
+from .publish_store import approve as approve_publish, enqueue as enqueue_publish, list_items as list_publish_items
 from .strategy_store import get_strategy, list_strategy_versions, rollback_strategy, save_strategy
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
@@ -29,6 +30,16 @@ class ExperimentIn(BaseModel):
     channel: str
     variant: str
     experiment_id: str | None = None
+
+class QueuePublishIn(BaseModel):
+    channel: str = Field(min_length=1, max_length=100)
+    text: str = Field(min_length=1, max_length=10000)
+    url: str = Field(min_length=1, max_length=4000)
+
+
+class QueueApprovalIn(BaseModel):
+    item_id: int = Field(ge=1)
+
 
 class PostDraftIn(BaseModel):
     content: str = Field(min_length=1, max_length=10000)
@@ -124,6 +135,31 @@ async def import_cpagrip(authorization: str | None = Header(default=None)):
     imported = await import_observed_offers(rows)
     await log_action("cpagrip_import", details={"observed": len(rows), "imported": len(imported)})
     return {"imported": imported, "observed": len(rows)}
+
+@app.post("/api/publishing/queue")
+async def queue_publish(payload: QueuePublishIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    result = await enqueue_publish(payload.channel, payload.text, payload.url)
+    await log_action("publish_queued", target=str(result["id"]), details={"channel": payload.channel})
+    return result
+
+
+@app.get("/api/publishing/queue")
+async def publishing_queue(status: str | None = None):
+    return {"items": await list_publish_items(status)}
+
+
+@app.post("/api/publishing/queue/approve")
+async def approve_publish_item(payload: QueueApprovalIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    result = await approve_publish(payload.item_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="queue item not found")
+    if result["status"] != "approved":
+        raise HTTPException(status_code=409, detail="queue item is not pending")
+    await log_action("publish_approved", target=str(payload.item_id))
+    return result
+
 
 @app.post("/api/publishing/postiz-draft")
 async def postiz_draft(payload: PostDraftIn, authorization: str | None = Header(default=None)):
