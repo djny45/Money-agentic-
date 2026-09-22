@@ -3,6 +3,7 @@ from .config import settings
 from pydantic import BaseModel, Field
 from .api_service import integration_status, search_openaffiliate, fetch_cpagrip_offers
 from .services import analytics, create_experiment, create_offer, get_experiment, get_offer, import_observed_offers, learning_decision, list_experiments, list_offers, record_metrics, tracked_offer_url
+from .audit import list_audit, log_action
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
 
@@ -53,7 +54,9 @@ async def offers():
 @app.post("/api/offers")
 async def add_offer(payload: OfferIn, authorization: str | None = Header(default=None)):
     require_control_token(authorization)
-    return await create_offer(**payload.model_dump())
+    result = await create_offer(**payload.model_dump())
+    await log_action("offer_created", target=result["id"], details={"country": result["country"], "category": result.get("category")})
+    return result
 
 @app.get("/api/offers/{offer_id}")
 async def offer(offer_id: str):
@@ -71,14 +74,18 @@ async def add_experiment(payload: ExperimentIn, authorization: str | None = Head
     require_control_token(authorization)
     if not await get_offer(payload.offer_id):
         raise HTTPException(status_code=404, detail="offer not found")
-    return await create_experiment(**payload.model_dump())
+    result = await create_experiment(**payload.model_dump())
+    await log_action("experiment_created", target=result["id"], details={"offer_id": result["offer_id"], "channel": result["channel"], "variant": result["variant"]})
+    return result
 
 @app.post("/api/experiments/{experiment_id}/metrics")
 async def metrics(experiment_id: str, payload: MetricsIn, authorization: str | None = Header(default=None)):
     require_control_token(authorization)
     if not await get_experiment(experiment_id):
         raise HTTPException(status_code=404, detail="experiment not found")
-    return await record_metrics(experiment_id, **payload.model_dump())
+    result = await record_metrics(experiment_id, **payload.model_dump())
+    await log_action("metrics_recorded", target=experiment_id, details=payload.model_dump())
+    return result
 
 @app.get("/api/experiments/{experiment_id}/learning")
 async def learning(experiment_id: str):
@@ -99,7 +106,14 @@ async def tracked_url(offer_id: str, source: str, medium: str, campaign: str, co
 async def import_cpagrip(authorization: str | None = Header(default=None)):
     require_control_token(authorization)
     rows = await fetch_cpagrip_offers()
-    return {"imported": await import_observed_offers(rows), "observed": len(rows)}
+    imported = await import_observed_offers(rows)
+    await log_action("cpagrip_import", details={"observed": len(rows), "imported": len(imported)})
+    return {"imported": imported, "observed": len(rows)}
+
+@app.get("/api/audit")
+async def audit(limit: int = 100, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    return {"entries": await list_audit(limit)}
 
 @app.get("/api/research/cpagrip-offers")
 async def cpagrip_offers():
