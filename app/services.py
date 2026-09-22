@@ -85,7 +85,7 @@ async def record_metrics(experiment_id: str, *, impressions: int = 0,
                          clicks: int = 0, conversions: int = 0,
                          revenue: float = 0.0) -> dict | None:
     values = [impressions, clicks, conversions]
-    if any(int(v) < 0 for v in values) or float(revenue) < 0:
+    if any(int(v) < 0 for v in values) or float(revenue) < 0 or float(spend) < 0:
         raise ValueError("metrics must be non-negative")
     await init_db()
     async with __import__("aiosqlite").connect(DB_PATH) as db:
@@ -94,9 +94,10 @@ async def record_metrics(experiment_id: str, *, impressions: int = 0,
                SET impressions=impressions+?,
                    clicks=clicks+?,
                    conversions=conversions+?,
-                   revenue=revenue+?
+                   revenue=revenue+?,
+                   spend=spend+?
                WHERE id=?""",
-            (int(impressions), int(clicks), int(conversions), float(revenue), experiment_id),
+            (int(impressions), int(clicks), int(conversions), float(revenue), float(spend), experiment_id),
         )
         await db.commit()
     return await get_experiment(experiment_id)
@@ -142,12 +143,14 @@ async def analytics() -> dict:
                  COALESCE(SUM(impressions),0),
                  COALESCE(SUM(clicks),0),
                  COALESCE(SUM(conversions),0),
-                 COALESCE(SUM(revenue),0)
+                 COALESCE(SUM(revenue),0),
+                 COALESCE(SUM(spend),0)
                FROM experiments"""
         )
-        impressions, clicks, conversions, revenue = await cur.fetchone()
+        impressions, clicks, conversions, revenue, spend = await cur.fetchone()
     impressions, clicks, conversions = map(int, (impressions, clicks, conversions))
     revenue = float(revenue)
+    spend = float(spend)
     ctr = clicks / impressions if impressions else 0.0
     cr = conversions / clicks if clicks else 0.0
     epc = revenue / clicks if clicks else 0.0
@@ -156,8 +159,8 @@ async def analytics() -> dict:
         "clicks": clicks,
         "conversions": conversions,
         "revenue": round(revenue, 4),
-        "spend": 0.0,
-        "profit": round(revenue, 4),
+        "spend": round(spend, 4),
+        "profit": round(revenue - spend, 4),
         "ctr": round(ctr, 6),
         "conversion_rate": round(cr, 6),
         "epc": round(epc, 6),
