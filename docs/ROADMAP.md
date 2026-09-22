@@ -15,6 +15,7 @@
 - [ ] CPA network reporting/import adapter
 - [ ] Social platform adapters using official APIs
 - [x] AI-assisted ad banner generation
+- [x] Optional self-hosted ComfyUI image generation client
 - [x] Approval-gated ad creative publisher interface
 - [ ] Advertising-platform creative adapters using official APIs
 - [ ] Self-hosted scheduler integration
