@@ -23,7 +23,7 @@ async def optimize_experiments(*, sample_floor: int = 30) -> dict:
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
         cur = await db.execute(
-            "SELECT * FROM experiments ORDER BY started_at DESC"
+            "SELECT e.*, o.title AS offer_title FROM experiments e LEFT JOIN offers o ON o.id=e.offer_id ORDER BY e.started_at DESC"
         )
         experiments = await cur.fetchall()
 
@@ -53,8 +53,8 @@ async def optimize_experiments(*, sample_floor: int = 30) -> dict:
         decisions.append(item)
 
         if decision.action == "retain_and_test":
-            strategy = await get_strategy(f"{exp['channel']}:{exp['offer_id'][:40]}")
-            base = StrategyManager().propose(exp["offer_id"], exp["channel"])
+            strategy = await get_strategy(f"{exp['channel']}:{(exp['offer_title'] or exp['offer_id'])[:40]}")
+            base = StrategyManager().propose(exp["offer_title"] or exp["offer_id"], exp["channel"])
             if strategy:
                 base.evidence = {
                     **json.loads(strategy["evidence_json"]),
