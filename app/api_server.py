@@ -95,6 +95,12 @@ async def tracked_url(offer_id: str, source: str, medium: str, campaign: str, co
     return {"url": result}
 
 
+@app.post("/api/research/import-cpagrip")
+async def import_cpagrip(authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    rows = await fetch_cpagrip_offers()
+    return {"imported": await import_observed_offers(rows), "observed": len(rows)}
+
 @app.get("/api/research/cpagrip-offers")
 async def cpagrip_offers():
     return {"source": "configured CPAGrip feed", "offers": await fetch_cpagrip_offers()}
