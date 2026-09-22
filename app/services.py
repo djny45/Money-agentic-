@@ -125,6 +125,7 @@ async def learning_decision(experiment_id: str, sample_floor: int = 30) -> dict 
         clicks=experiment["clicks"],
         conversions=experiment["conversions"],
         revenue=experiment["revenue"],
+        spend=experiment["spend"],
         sample_floor=sample_floor,
     )
     return {
