@@ -6,6 +6,7 @@ from .services import analytics, create_experiment, create_offer, get_experiment
 from .audit import list_audit, log_action
 from .strategy import StrategyManager
 from .publish_store import approve as approve_publish, enqueue as enqueue_publish, list_items as list_publish_items
+from .autopilot import list_autopilot_runs, run_autopilot
 from .strategy_store import get_strategy, list_strategy_versions, rollback_strategy, save_strategy
 
 app = FastAPI(title="Money-Agentic API", version="0.1.0")
@@ -30,6 +31,11 @@ class ExperimentIn(BaseModel):
     channel: str
     variant: str
     experiment_id: str | None = None
+
+class AutopilotIn(BaseModel):
+    channel: str = Field(min_length=1, max_length=100)
+    limit: int = Field(default=5, ge=1, le=20)
+
 
 class QueuePublishIn(BaseModel):
     channel: str = Field(min_length=1, max_length=100)
@@ -135,6 +141,28 @@ async def import_cpagrip(authorization: str | None = Header(default=None)):
     imported = await import_observed_offers(rows)
     await log_action("cpagrip_import", details={"observed": len(rows), "imported": len(imported)})
     return {"imported": imported, "observed": len(rows)}
+
+@app.post("/api/autopilot/run")
+async def autopilot_run(payload: AutopilotIn, authorization: str | None = Header(default=None)):
+    require_control_token(authorization)
+    result = await run_autopilot(channel=payload.channel, limit=payload.limit)
+    await log_action(
+        "autopilot_run",
+        target=str(result["run_id"]),
+        details={
+            "channel": payload.channel,
+            "scanned": result["scanned"],
+            "queued": result["queued"],
+            "blocked": result["blocked"],
+        },
+    )
+    return result
+
+
+@app.get("/api/autopilot/runs")
+async def autopilot_runs(limit: int = 20):
+    return {"runs": await list_autopilot_runs(limit)}
+
 
 @app.post("/api/publishing/queue")
 async def queue_publish(payload: QueuePublishIn, authorization: str | None = Header(default=None)):
