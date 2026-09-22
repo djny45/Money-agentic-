@@ -77,7 +77,7 @@ Default behavior is **DRY_RUN** and publishing requires an explicitly authorized
 
 ### Open-source image generation
 
-The banner agent can optionally submit an API-format workflow to a locally hosted **ComfyUI** instance at `COMFYUI_URL`. This keeps image generation self-hosted and avoids requiring a hosted image-generation API. ComfyUI workflows are supplied by the deployment rather than invented by the agent. See the official ComfyUI API example for the `/prompt` workflow format. citeturn0search0turn0search2
+The banner agent can optionally submit an API-format workflow to a locally hosted **ComfyUI** instance at `COMFYUI_URL`. This keeps image generation self-hosted and avoids requiring a hosted image-generation API. ComfyUI workflows are supplied by the deployment rather than invented by the agent. See the official ComfyUI API example for the `/prompt` workflow format.
 
 ## Self-improvement model
 
