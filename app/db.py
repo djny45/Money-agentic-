@@ -51,6 +51,16 @@ CREATE TABLE IF NOT EXISTS knowledge (
   content TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS publish_queue (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  channel TEXT NOT NULL,
+  text TEXT NOT NULL,
+  url TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  approved INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  approved_at TEXT
+);
 CREATE TABLE IF NOT EXISTS audit_log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   action TEXT NOT NULL,
