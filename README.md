@@ -50,7 +50,7 @@ Research -> Offer Intelligence -> Strategy -> Content -> Compliance
 - UTM attribution helper
 - SQLite persistence
 - Strategy memory
-- Ollama client
+- Generic external LLM API session (key stays server-side)
 - Docker support
 - Automated tests + GitHub Actions
 - Policy configuration
@@ -72,9 +72,7 @@ Default behavior is **DRY_RUN** and publishing requires an explicitly authorized
 
 ### Open-source creative stack
 
-- **Ollama** — local language-model inference for research/copy workflows.
 - **ComfyUI** — self-hosted image generation workflow engine.
-- **LocalAI** — optional OpenAI-compatible local inference fallback.
 - **Postiz** — self-hosted publishing/scheduling integration for authorized social accounts.
 
 ### Open-source image generation
