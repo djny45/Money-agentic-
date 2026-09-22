@@ -5,6 +5,7 @@ import uuid
 from .db import DB_PATH, init_db
 from .tracking import add_utm
 from .learning import LearningEngine
+from .offer_intelligence import OfferIntelligence
 
 
 def _now() -> str:
@@ -167,3 +168,18 @@ async def analytics() -> dict:
         "epc": round(epc, 6),
         "source": "SQLite experiment data",
     }
+
+
+async def import_observed_offers(rows: list[dict]) -> list[dict]:
+    """Persist only observed feed fields; no invented performance metrics."""
+    imported = []
+    for row in rows:
+        if not row.get("title") or not row.get("url") or not row.get("country"):
+            continue
+        imported.append(await create_offer(
+            title=str(row["title"]), url=str(row["url"]),
+            payout=float(row.get("payout") or 0), country=str(row["country"]),
+            category=str(row.get("category") or "") or None,
+            offer_id=str(row.get("id") or "") or None,
+        ))
+    return imported
