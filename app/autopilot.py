@@ -14,7 +14,7 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-async def run_autopilot(*, channel: str, limit: int = 5) -> dict:
+async def run_autopilot(*, channel: str, limit: int = 5, offer_url: str | None = None) -> dict:
     """Run one bounded autopilot cycle.
 
     It selects only active offers with observed facts, creates transparent
@@ -26,8 +26,8 @@ async def run_autopilot(*, channel: str, limit: int = 5) -> dict:
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
         cur = await db.execute(
-            "SELECT * FROM offers WHERE active=1 ORDER BY rowid DESC LIMIT ?",
-            (limit,),
+            "SELECT * FROM offers WHERE active=1 AND (? IS NULL OR url=?) ORDER BY rowid DESC LIMIT ?",
+            (offer_url, offer_url, limit),
         )
         rows = await cur.fetchall()
 
