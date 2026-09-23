@@ -36,6 +36,7 @@ class ExperimentIn(BaseModel):
 class AutopilotIn(BaseModel):
     channel: str = Field(min_length=1, max_length=100)
     limit: int = Field(default=5, ge=1, le=20)
+    offer_url: str | None = Field(default=None, max_length=4000)
 
 
 class QueuePublishIn(BaseModel):
@@ -146,7 +147,7 @@ async def import_cpagrip(authorization: str | None = Header(default=None)):
 @app.post("/api/autopilot/run")
 async def autopilot_run(payload: AutopilotIn, authorization: str | None = Header(default=None)):
     require_control_token(authorization)
-    result = await run_autopilot(channel=payload.channel, limit=payload.limit)
+    result = await run_autopilot(channel=payload.channel, limit=payload.limit, offer_url=payload.offer_url)
     await log_action(
         "autopilot_run",
         target=str(result["run_id"]),
